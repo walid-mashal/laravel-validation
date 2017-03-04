@@ -1,16 +1,40 @@
-### PyVel Python Laravel Validation
+### Laravel Validation
 
-PyVel is a python class containing logic for implementing Laravel style Data Validation using python language. This code can be used with html forms to validate their input fields and can also be used with any kind of other data as long as the data is in the form of a python dictionary.
+**LaravelValidation** is a python class containing logic for implementing Laravel style Data Validation using python language. This code can be used with html forms to validate their input fields and can also be used with any kind of other data as long as the data is in the form of a python dictionary.
 
 For Example we can have some data in the form of a python dictionary as the following:
 
-`data = { 'name':'2222222', 'phone':'2', 'birthday':'1991/03/04', 'email':'info@example.com', 'host':'172.30.30.231', 'website':'https://www.example.com', 'nationality':'afghan', 'active':'1', }`
+    data = { 
+        'name':'2222222',   
+        'phone':'2',  
+        'birthday':'1991/03/04',    
+        'email':'info@example.com',    
+        'host':'172.30.30.231',  
+        'website':'https://www.example.com', 
+        'nationality':'afghan', 'active':'1',  
+    }
 
 that needs to be validated.
 
 So we can write Rules to validate the data in the following way
 
-`rules = { 'name':'required|size:20', 'phone':'phone', 'birthday':'date|date_format:%Y/%m/%d', 'email':'required|email', 'host':'ip', 'website':'website', 'nationality':'in:afghan,pakistani,irani', 'active':'boolean' }`  
+    rules = { 
+        'name':'required|size:20',   
+        'phone':'phone', 
+        'birthday':'date|date_format:%Y/%m/%d', 
+        'email':'required|email', 'host':'ip', 
+        'website':'website', 
+        'nationality':'in:afghan,pakistani,irani',
+        'active':'boolean'
+    }  
+Now we can write the following code to validate the **data**:
+
+    from laravel_validation import LaravelValidation
+
+    validator = LaravelValidation()
+    errors = validator.validate(data,rules)
+
+
 
 Description:
 
