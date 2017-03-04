@@ -27,14 +27,6 @@ So we can write Rules to validate the data in the following way
         'nationality':'in:afghan,pakistani,irani',
         'active':'boolean'
     }  
-Now we can write the following code to validate the **data**:
-
-    from laravel_validation import LaravelValidation
-
-    validator = LaravelValidation()
-    errors = validator.validate(data,rules)
-
-
 
 Description:
 
@@ -53,6 +45,16 @@ The **email** is also required and a valid email should be entered into that fie
 **Nationality** can be one of the three provided strings: afghan,pakistani,irani  
 
 **Active** must be one of the following: 1,0,"1","0","false","true",False,True
+
+
+Now we can write the following code to validate the **data**:
+
+    from laravel_validation import LaravelValidation
+
+    validator = LaravelValidation()
+    errors = validator.validate(data,rules)
+
+
 
 ### Validation Rules
 
