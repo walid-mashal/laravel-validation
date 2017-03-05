@@ -8,7 +8,7 @@ data = {
 	'birthday':'1991/03/04',
 	'email':'walid@netlinks.ws',
 	'host':'172.30.30.231',
-	'website':'www.google.com',
+	'website':'google.com',
 	'nationality':'afghan',
 	'active':'1',
 }
