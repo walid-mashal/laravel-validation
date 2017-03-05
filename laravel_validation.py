@@ -83,11 +83,11 @@ class LaravelValidation():
 
 		errs = []
 		try:
-			 if data[field_name] == '':
+			if data[field_name] == '':
 				 errs.append(field_name + " must be filled")
 		except KeyError:
-			 errs.append("No Field named " + field_name + " to validate for required value")
-			 return []
+			errs.append("No Field named " + field_name + " to validate for required value")
+			return []
 
 		return errs        
 
@@ -126,7 +126,7 @@ class LaravelValidation():
 			if not data[field_name].isdigit():
 				errs.append(field_name + " must be an integer")
 		except KeyError:
-				errs.append("No Field named %s to validate for integer value" % (field_name))
+			errs.append("No Field named %s to validate for integer value" % (field_name))
 		return errs
 
 
@@ -155,7 +155,7 @@ class LaravelValidation():
 			if data[field_name] not in bool_values:
 				errs.append(field_name + " must be a valid one of the following " + str(bool_values))
 		except KeyError:
-				errs.append("No Field named %s to validate for boolean value" % (field_name))
+			errs.append("No Field named %s to validate for boolean value" % (field_name))
 		return errs
 
 	def __validate_ip_fields(self, data, field_name):
@@ -167,8 +167,8 @@ class LaravelValidation():
 		try:
 			result = comp_re.match(data[field_name])
 		except KeyError:
-			 	result = "error"
-				errs.append("No Field named %s to validate for IP Address value" % (field_name))
+			result = "error"
+			errs.append("No Field named %s to validate for IP Address value" % (field_name))
 
 		if not result:
 			errs.append(field_name + " must be a valid IP Address")
@@ -187,7 +187,7 @@ class LaravelValidation():
 			 result = "error"
 
 		 if not result:
-			errs.append(field_name + " must be a valid phone number")
+			 errs.append(field_name + " must be a valid phone number")
 		 return errs
 
 	def __validate_website_fields(self, data, field_name):
@@ -197,13 +197,13 @@ class LaravelValidation():
 
 		 errs = []
 		 try:
-		 		result = comp_re.match(data[field_name])
+		 	 result = comp_re.match(data[field_name])
 		 except KeyError:
-			 	result = "error"
-				errs.append("No Field named %s to validate for a website url value" % (field_name))
+			 result = "error"
+			 errs.append("No Field named %s to validate for a website url value" % (field_name))
 
 		 if not result:
-			errs.append(field_name + " must be a valid Website URL")
+			 errs.append(field_name + " must be a valid Website URL")
 		 return errs
 
 	def __validate_max_fields(self, data, field_name, rule):
@@ -214,14 +214,14 @@ class LaravelValidation():
 
 		 errs = []
 		 try:
-			if data[field_name].isdigit():
-				if int(data[field_name]) > max_value:
-					errs.append("The maximum value of the " + field_name+ " can be " + str(max_value))
-			else:
-				if len(data[field_name]) > max_value:
-					errs.append("The maximum number of characters in the value of the " + field_name + " can be " + str(max_value)+" characters")
+			 if data[field_name].isdigit():
+				 if int(data[field_name]) > max_value:
+					 errs.append("The maximum value of the " + field_name+ " can be " + str(max_value))
+			 else:
+				 if len(data[field_name]) > max_value:
+					 errs.append("The maximum number of characters in the value of the " + field_name + " can be " + str(max_value)+" characters")
 		 except KeyError:
-				errs.append("No Field named %s to validate for maximum value" %(field_name))
+			 errs.append("No Field named %s to validate for maximum value" %(field_name))
 
 		 return errs
 
@@ -240,7 +240,7 @@ class LaravelValidation():
 				if len(data[field_name]) < min_value:
 					errs.append("The number of characters in the value of the " + field_name + " must be atleast " + str(min_value)+" characters")
 		 except KeyError:
-				errs.append("No Field named %s to validate for minimum value" % (field_name))
+			errs.append("No Field named %s to validate for minimum value" % (field_name))
 
 		 return errs
 
@@ -252,10 +252,10 @@ class LaravelValidation():
 
 		 errs = []
 		 try:
-				if len(data[field_name]) >= size_value:
-					errs.append("The number of characters in " + field_name + " must be " + str(size_value))
+			 if len(data[field_name]) >= size_value:
+				 errs.append("The number of characters in " + field_name + " must be " + str(size_value))
 		 except KeyError:
-				errs.append("No Field named %s to validate for a size rule" % (field_name))
+			 errs.append("No Field named %s to validate for a size rule" % (field_name))
 
 		 return errs
 
@@ -267,10 +267,10 @@ class LaravelValidation():
 
 		 errs = []
 		 try:
-			if data[field_name] in ls:
-				errs.append(field_name + " must not be one of these: " + str(ls))
+			 if data[field_name] in ls:
+				 errs.append(field_name + " must not be one of these: " + str(ls))
 		 except KeyError:
-				errs.append("No Field named %s to validate for not_in rule" % (field_name))
+			 errs.append("No Field named %s to validate for not_in rule" % (field_name))
 
 		 return errs
 
@@ -282,10 +282,10 @@ class LaravelValidation():
 
 		 errs = []
 		 try:
-				if data[field_name] not in ls:
-					errs.append(field_name + " must not be one of these: " + str(ls))
+			 if data[field_name] not in ls:
+				 errs.append(field_name + " must not be one of these: " + str(ls))
 		 except KeyError:
-				errs.append("No Field named %s to validate for IN Rule" % (field_name))
+			 errs.append("No Field named %s to validate for IN Rule" % (field_name))
 		 return errs
 
 
@@ -296,10 +296,10 @@ class LaravelValidation():
 		 ls = rule.split(':')[1].split(',')
 		 errs = []
 		 try:
-				if data[field_name] == data[ls[0]]:
-					errs.append(field_name+ " must not be the same as " + str(ls[0]))
+			 if data[field_name] == data[ls[0]]:
+				 errs.append(field_name+ " must not be the same as " + str(ls[0]))
 		 except KeyError:
-				errs.append("No Field named %s to validate for the DIFFERENT Rule" % (field_name))
+			 errs.append("No Field named %s to validate for the DIFFERENT Rule" % (field_name))
 		 except Exception:
 			 errs.append("Error Occured",sys.exc_info())
  		 
@@ -313,8 +313,8 @@ class LaravelValidation():
 		 errs = []
 
 		 try:
-				if data[field_name] != data[ls[0]]:
-					errs.append(field_name+ " must be the same as " + str(ls[0]))
+			 if data[field_name] != data[ls[0]]:
+				 errs.append(field_name+ " must be the same as " + str(ls[0]))
 		 except KeyError:
-				errs.append("No Field named %s to validate for the SAME Rule" % (field_name))
+			 errs.append("No Field named %s to validate for the SAME Rule" % (field_name))
 		 return errs
