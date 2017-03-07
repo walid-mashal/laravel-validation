@@ -11,6 +11,7 @@ data = {
 	'website':'google.com',
 	'nationality':'afghan',
 	'active':'1',
+	"age":"23"
 }
 
 rules = {
@@ -23,15 +24,15 @@ rules = {
 	'host':'ip',
 	'website':'website|size:3',
 	'nationality':'in:afghan,pakistani,irani',
-	'active':'boolean'
+	'active':'boolean',
+	'age':'between:18,66'
 }
 
 validation = Validation()
-# validation.validate(data,rules)
 
 validation.is_valid(data,rules)
 
 errors = validation.errors
 
 for error in errors:
-	print error,'===================='
+	print error

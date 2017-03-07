@@ -76,6 +76,10 @@ class Validation():
 				elif rule.startswith("same"):
 					field_errors.extend(self.__validate_same_fields(data, field_name, rule))
 
+				#if the field has a "same" rule assigned
+				elif rule.startswith("between"):
+					field_errors.extend(self.__validate_between_fields(data, field_name, rule))
+
 			#combine the errors of current field with the global errors list
 			errors.extend(field_errors);
 		self.errors = errors
@@ -267,8 +271,8 @@ class Validation():
 
 		 #retrieve the value for that not_in rule
 		 ls = rule.split(':')[1].split(',')
-
 		 errs = []
+		 
 		 try:
 			 if data[field_name] in ls:
 				 errs.append(field_name + " must not be one of these: " + str(ls))
@@ -282,8 +286,8 @@ class Validation():
 
 		 #retrieve the value for that in rule
 		 ls = rule.split(':')[1].split(',')
-
 		 errs = []
+
 		 try:
 			 if data[field_name] not in ls:
 				 errs.append(field_name + " must not be one of these: " + str(ls))
@@ -293,11 +297,12 @@ class Validation():
 
 
 	def __validate_different_fields(self, data, field_name, rule):
-		 """Used for validating fields for some number of values to allow, returns a list of error messages"""
+		 """Used for validating fields whose value should be different than the value of some other field, returns a list of error messages"""
 
 		 #retrieve the value for the different rule
 		 ls = rule.split(':')[1].split(',')
 		 errs = []
+
 		 try:
 			 if data[field_name] == data[ls[0]]:
 				 errs.append(field_name+ " must not be the same as " + str(ls[0]))
@@ -309,9 +314,9 @@ class Validation():
 		 return errs
 
 	def __validate_same_fields(self, data, field_name, rule):
-		 """Used for validating fields for some number of values to allow, returns a list of error messages"""
+		 """Used for validating fields whose value should be the same as some other field value, returns a list of error messages"""
 
-		 #retrieve the value for the different rule
+		 #retrieve the value for the same rule
 		 ls = rule.split(':')[1].split(',')
 		 errs = []
 
@@ -322,11 +327,25 @@ class Validation():
 			 errs.append("No Field named %s to validate for the SAME Rule" % (field_name))
 		 return errs
 
+
+	def __validate_between_fields(self, data, field_name, rule):
+		 """Used for validating fields for a number between two digits to allow, returns a list of error messages"""
+
+		 #retrieve the value for the between rule
+		 ls = rule.split(':')[1].split(',')
+		 errs = []
+
+		 try:
+			 if int(data[field_name]) < int(ls[0]) or int(data[field_name]) > int(ls[1]):
+				 errs.append(field_name+ " must be between %s and %s " % (ls[0],ls[1]))
+		 except KeyError:
+			 errs.append("No Field named %s to validate for the BETWEEN Rule" % (field_name))
+		 return errs
+
 	def is_valid(self, data, rules):
 		"""Validates the data according to the rules, returns True if the data is valid, and False if the data is invalid"""
 
 		errors = self.validate(data,rules)
-
 		self.errors = errors
 
 		if len(errors) > 0:
