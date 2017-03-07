@@ -1,6 +1,6 @@
-### Laravel Validation
+### Validation
 
-**LaravelValidation** is a python class containing logic for implementing Laravel style Data Validation using python language. This code can be used with html forms to validate their input fields and can also be used with any kind of other data as long as the data is in the form of a python dictionary.
+**Validation** is a python class containing logic for implementing Laravel style Data Validation using python language. This code can be used with html forms to validate their input fields and can also be used with any kind of other data as long as the data is in the form of a python dictionary.
 
 For Example we can have some data in the form of a python dictionary as the following:
 
@@ -11,7 +11,8 @@ For Example we can have some data in the form of a python dictionary as the foll
         'email':'info@example.com',    
         'host':'172.30.30.231',  
         'website':'https://www.example.com', 
-        'nationality':'afghan', 'active':'1',  
+        'nationality':'afghan',
+        'active':'1',  
     }
 
 that needs to be validated.
@@ -22,7 +23,8 @@ So we can write Rules to validate the data in the following way
         'name':'required|size:20',   
         'phone':'phone', 
         'birthday':'date|date_format:%Y/%m/%d', 
-        'email':'required|email', 'host':'ip', 
+        'email':'required|email',
+        'host':'ip', 
         'website':'website', 
         'nationality':'in:afghan,pakistani,irani',
         'active':'boolean'
@@ -49,12 +51,23 @@ The **email** is also required and a valid email should be entered into that fie
 
 Now we can write the following code to validate the **data**:
 
-    from laravel_validation import LaravelValidation
+    from validation import Validation
 
-    validator = LaravelValidation()
+    validator = Validation()
     errors = validator.validate(data,rules)
 
+Now the **errors** contain a list of  error messages that is the result of the validation.
 
+We can call the **is_valid()** method to validate the data and will return either **True** or **False** 
+
+    from validation import Validation
+
+    validator = Validation()
+    isvalid = validator.is_valid(data,rules)
+	
+    errors = validator.errors
+    
+After **validate()** or **is_valid()** there will be an instance variable with the name **errors** set on the object that holds the list of validation error messages.
 
 ### Validation Rules
 
@@ -119,3 +132,4 @@ The given field must be different than the field under validation.
 #### same:field
 
 The given field must match the field under validation.
+

@@ -1,4 +1,4 @@
-from laravel_validation import LaravelValidation
+from validation import Validation
 
 data = {
 	'old_password':'',
@@ -26,8 +26,12 @@ rules = {
 	'active':'boolean'
 }
 
-PyVel = LaravelValidation()
-errors = PyVel.validate(data,rules)
+validation = Validation()
+# validation.validate(data,rules)
+
+validation.is_valid(data,rules)
+
+errors = validation.errors
 
 for error in errors:
-	print error
+	print error,'===================='

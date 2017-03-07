@@ -1,8 +1,11 @@
 import re, datetime, sys
 
-class LaravelValidation():
+class Validation():
+	#List to store the error messages
+	errors = []
+
 	def validate(self, data, rules):
-		"""Validate the 'data' according to the 'rules' given, returns a list of errors name 'errors'"""
+		"""Validate the 'data' according to the 'rules' given, returns a list of errors named 'errors'"""
 
 		errors=[]
 	
@@ -75,7 +78,7 @@ class LaravelValidation():
 
 			#combine the errors of current field with the global errors list
 			errors.extend(field_errors);
-
+		self.errors = errors
 		return errors
 
 	def __validate_required_fields(self, data, field_name):
@@ -318,3 +321,15 @@ class LaravelValidation():
 		 except KeyError:
 			 errs.append("No Field named %s to validate for the SAME Rule" % (field_name))
 		 return errs
+
+	def is_valid(self, data, rules):
+		"""Validates the data according to the rules, returns True if the data is valid, and False if the data is invalid"""
+
+		errors = self.validate(data,rules)
+
+		self.errors = errors
+
+		if len(errors) > 0:
+			return False
+		else:
+			return True
