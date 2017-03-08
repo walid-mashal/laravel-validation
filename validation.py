@@ -7,7 +7,7 @@ class Validation():
 	def validate(self, data, rules):
 		"""Validate the 'data' according to the 'rules' given, returns a list of errors named 'errors'"""
 
-		errors=[]
+		errors = []
 	
 		#iterate through the rules dictionary, fetching each rule name (dictionary key) one by one
 		for field_name in rules:
@@ -60,6 +60,14 @@ class Validation():
 				elif rule == "website":
 					field_errors.extend(self.__validate_website_fields(data,field_name))
 
+				#if the field has a "alpha" rule assigned
+				elif rule == "alpha":
+					field_errors.extend(self.__validate_alpha_fields(data,field_name))
+
+				#if the field has a "alpha" rule assigned
+				elif rule == "alpha_num":
+					field_errors.extend(self.__validate_alpha_num_fields(data,field_name))
+
 				#if the field has a "not_in" rule assigned
 				elif rule.startswith("not_in"):
 					field_errors.extend(self.__validate_not_in_fields(data,field_name,rule))
@@ -76,7 +84,7 @@ class Validation():
 				elif rule.startswith("same"):
 					field_errors.extend(self.__validate_same_fields(data, field_name, rule))
 
-				#if the field has a "same" rule assigned
+				#if the field has a "bteween" rule assigned
 				elif rule.startswith("between"):
 					field_errors.extend(self.__validate_between_fields(data, field_name, rule))
 
@@ -94,7 +102,7 @@ class Validation():
 				 errs.append(field_name + " must be filled")
 		except KeyError:
 			errs.append("No Field named " + field_name + " to validate for required value")
-			return []
+			# return []
 
 		return errs        
 
@@ -146,10 +154,7 @@ class Validation():
 		try:	
 			result = comp_re.match(data[field_name])
 		except KeyError:
-			result = "error"
 			errs.append("No Field named %s to validate for Phone Number value" % (field_name))
-		if not result:
-			errs.append(field_name + " must be a valid email")
 		return errs
 
 	def __validate_boolean_fields(self, data, field_name):
@@ -174,11 +179,8 @@ class Validation():
 		try:
 			result = comp_re.match(data[field_name])
 		except KeyError:
-			result = "error"
 			errs.append("No Field named %s to validate for IP Address value" % (field_name))
 
-		if not result:
-			errs.append(field_name + " must be a valid IP Address")
 		return errs
 
 	def __validate_phone_fields(self, data, field_name):
@@ -191,10 +193,7 @@ class Validation():
 			 result = comp_re.match(data[field_name])
 		 except KeyError:
 			 errs.append("No Field named "+field_name+" to validate as a phone number")
-			 result = "error"
-
-		 if not result:
-			 errs.append(field_name + " must be a valid phone number")
+			
 		 return errs
 
 	def __validate_website_fields(self, data, field_name):
@@ -206,11 +205,34 @@ class Validation():
 		 try:
 		 	 result = comp_re.match(data[field_name])
 		 except KeyError:
-			 result = "error"
 			 errs.append("No Field named %s to validate for a website url value" % (field_name))
 
-		 if not result:
-			 errs.append(field_name + " must be a valid Website URL")
+		 return errs
+
+	def __validate_alpha_fields(self, data, field_name):
+		 """Used for validating fields for alphabets only, returns a list of error messages"""
+
+		 errs = []
+		 try:
+		 	 if not data[field_name].isalpha():
+				  errs.append("%s can have only alphabets" % field_name)
+		 except KeyError:
+			 errs.append("No Field named %s to validate for a alpha rule" % (field_name))
+
+		
+		 return errs
+
+
+	def __validate_alpha_num_fields(self, data, field_name):
+		 """Used for validating fields for alphabets and numbers, returns a list of error messages"""
+
+		 errs = []
+		 try:
+		 	 if not data[field_name].isalnum():
+				  errs.append("%s can have alphabets or numbers" % field_name)
+		 except KeyError:
+			 errs.append("No Field named %s to validate for a alpha_num rule" % (field_name))
+
 		 return errs
 
 	def __validate_max_fields(self, data, field_name, rule):
@@ -272,7 +294,7 @@ class Validation():
 		 #retrieve the value for that not_in rule
 		 ls = rule.split(':')[1].split(',')
 		 errs = []
-		 
+
 		 try:
 			 if data[field_name] in ls:
 				 errs.append(field_name + " must not be one of these: " + str(ls))
@@ -340,6 +362,8 @@ class Validation():
 				 errs.append(field_name+ " must be between %s and %s " % (ls[0],ls[1]))
 		 except KeyError:
 			 errs.append("No Field named %s to validate for the BETWEEN Rule" % (field_name))
+		 except ValueError:
+			 errs.append("%s can not be empty" % field_name)
 		 return errs
 
 	def is_valid(self, data, rules):
@@ -348,7 +372,5 @@ class Validation():
 		errors = self.validate(data,rules)
 		self.errors = errors
 
-		if len(errors) > 0:
-			return False
-		else:
-			return True
+		return not len(errors) > 0
+			

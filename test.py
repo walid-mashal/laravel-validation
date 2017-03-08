@@ -1,8 +1,8 @@
 from validation import Validation
 
 data = {
-	'old_password':'',
-	'new_password':'2222222',
+	'old_password':'@$#%$%$$#$#$#',
+	'new_password':'@$#%$%$$#$#$#',
 	'repeat_new_password':'222322222',
 	'phone':'hame',
 	'birthday':'1991/03/04',
@@ -16,9 +16,9 @@ data = {
 
 rules = {
 	'old_password':'required|digit|max:20',
-	'new_password':'different:old_password',
+	'new_password':'different:old_password|alpha',
 	'repeat_new_password':'same:new_password',
-	'phne':'phone|required|max:4|min:2|size:23|date',
+	'phone':'phone|required|max:4|min:2|size:23|date',
 	'birthday':'required|date|date_format:%Y/%m/%d',
 	'email':'required',
 	'host':'ip',
@@ -30,7 +30,7 @@ rules = {
 
 validation = Validation()
 
-validation.is_valid(data,rules)
+is_valid = validation.is_valid(data,rules)
 
 errors = validation.errors
 
