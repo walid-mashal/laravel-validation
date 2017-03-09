@@ -73,9 +73,25 @@ After **validate()** or **is_valid()** there will be an instance variable with t
 
 The following is a list of the validation rules available
 
+#### alpha
+
+The field under validation must be entirely alphabetic characters.
+
+#### alpha_num
+
+The field under validation must be entirely alpha-numeric characters.
+
+#### between:min,max
+
+The field under validation must have a size between the given **min** and **max**. Strings and numerics are evaluated in the same fashion as the **size** rule.
+
 #### boolean
 
 The field under validation must be able to be cast as a **boolean**. Accepted input values are true, false, 1, 0, "1" and "0".
+
+#### confirmed
+
+The field under validation must have a matching field of foo_confirmation. For example, if the field under validation is password, a matching password_confirmation field must be present in the input.
 
 #### date
 
@@ -84,6 +100,10 @@ The field under validation must be a valid date, the default value for the forma
 #### date_format:format
 
 The field under validation must match the format defined in the **format**, the default format is **%m/%d/%Y**. This rule should be preceeded by the **date** rule.
+
+#### different:field
+
+The given field must be different than the field under validation.
 
 #### digits:value
 
@@ -117,19 +137,14 @@ The field under validation must not be included in the given list of values.
 
 The field under validation must be present in the input data.
 
-#### size:value
-
-The field under validation must have a size matching the given value. For string data, value corresponds to the number of characters. For numeric data, value corresponds to a given integer value.
-
-#### website
-
-The field under validation must have a valid website url as value. for example: https://www.example.com
-
-#### different:field
-
-The given field must be different than the field under validation.
-
 #### same:field
 
 The given field must match the field under validation.
 
+#### size:value
+
+The field under validation must have a size matching the given **value**. For string data, value corresponds to the number of characters. For numeric data, **value** corresponds to a given integer value.
+
+#### website
+
+The field under validation must have a valid website url as value. for example: https://www.example.com or www.example.com

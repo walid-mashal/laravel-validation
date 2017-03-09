@@ -41,11 +41,15 @@ class Validation():
 				elif rule.startswith("min"):
 					field_errors.extend(self.__validate_min_fields(data,field_name,rule))
 
+				#if the field has a "min" rule assigned
+				elif rule.startswith("confirmed"):
+					field_errors.extend(self.__validate_confirmed_fields(data,field_name))
+
 				elif rule.startswith("size"):
 					field_errors.extend(self.__validate_size_fields(data,field_name,rule))
 
 				#if the field has a "digit" rule assigned
-				elif rule == "digit":
+				elif rule == "digits":
 					field_errors.extend(self.__validate_integer_fields(data,field_name))
 
 				#if the field has a "boolean" rule assigned
@@ -64,9 +68,13 @@ class Validation():
 				elif rule == "alpha":
 					field_errors.extend(self.__validate_alpha_fields(data,field_name))
 
-				#if the field has a "alpha" rule assigned
+				#if the field has a "alpha num" rule assigned
 				elif rule == "alpha_num":
 					field_errors.extend(self.__validate_alpha_num_fields(data,field_name))
+
+				#if the field has a "alpha num" rule assigned
+				elif rule == "email":
+					field_errors.extend(self.__validate_email_fields(data,field_name))
 
 				#if the field has a "not_in" rule assigned
 				elif rule.startswith("not_in"):
@@ -110,24 +118,24 @@ class Validation():
 		"""Used for validating date fields, returns a list of error messages"""
 
 		errs = []
+		date_format = None
 
 		#loop through each rule for the particular field to check if there is any date_format rule assigned
 		for rule in field_rules:
 
 			#if there is a date_format rule assigned then fetch the date format from that
 		 	if rule.startswith("date_format"):
-
 				df_format_index = field_rules.index(rule)
-
 				date_format = field_rules[df_format_index].split(":")[1]
 
-			#or if there is no date_format assigned then use a default format for validation
-			else:
-				date_format = '%m/%d/%Y'
+		#or if there is no date_format assigned then use a default format for validation
+		if not date_format:
+			date_format = '%m/%d/%Y'
+
 		try:
 			 datetime.datetime.strptime(data[field_name], date_format)
-		except ValueError:
-			 errs.append(field_name + " must be a valid date")
+		except ValueError,e:
+			 errs.append(e.message + " Field: "+field_name)
 		except KeyError:
 			 errs.append("No Field named %s to validate for Date value" % (field_name))
 			
@@ -149,12 +157,15 @@ class Validation():
 		"""Used for validating email fields, returns a list of error messages"""
 
 		comp_re = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
-
 		errs = []
 		try:	
 			result = comp_re.match(data[field_name])
 		except KeyError:
-			errs.append("No Field named %s to validate for Phone Number value" % (field_name))
+			errs.append("No Field named %s to validate for email value" % (field_name))
+			result = "error"
+
+		if not result:
+			errs.append("%s must be a valid email address" % field_name)
 		return errs
 
 	def __validate_boolean_fields(self, data, field_name):
@@ -180,7 +191,10 @@ class Validation():
 			result = comp_re.match(data[field_name])
 		except KeyError:
 			errs.append("No Field named %s to validate for IP Address value" % (field_name))
+			result = "error"
 
+		if not result:
+			errs.append("%s must be a valid IP address" % field_name)
 		return errs
 
 	def __validate_phone_fields(self, data, field_name):
@@ -193,6 +207,10 @@ class Validation():
 			 result = comp_re.match(data[field_name])
 		 except KeyError:
 			 errs.append("No Field named "+field_name+" to validate as a phone number")
+			 result = "error"
+
+		 if not result:
+			 errs.append("%s must be a valid Phone Number" % field_name)
 			
 		 return errs
 
@@ -200,12 +218,16 @@ class Validation():
 		 """Used for validating fields having website addresses, returns a list of error messages"""
 
 		 comp_re = re.compile(r'(http(s)?://)?([\w-]+\.)+[\w-]+[\w-]+[\.]+[\.com]+([./?%&=]*)?', re.IGNORECASE)
-
 		 errs = []
+
 		 try:
 		 	 result = comp_re.match(data[field_name])
 		 except KeyError:
 			 errs.append("No Field named %s to validate for a website url value" % (field_name))
+			 result = "error"
+
+		 if not result:
+			 errs.append("%s must be a valid Website URL" % field_name)
 
 		 return errs
 
@@ -218,7 +240,6 @@ class Validation():
 				  errs.append("%s can have only alphabets" % field_name)
 		 except KeyError:
 			 errs.append("No Field named %s to validate for a alpha rule" % (field_name))
-
 		
 		 return errs
 
@@ -271,6 +292,19 @@ class Validation():
 		 except KeyError:
 			errs.append("No Field named %s to validate for minimum value" % (field_name))
 
+		 return errs
+
+	def __validate_confirmed_fields(self, data, field_name):
+		 """if the field under validation is password, a matching password_confirmation field must be present in the data, returns a list of error messages"""
+
+		 errs = []
+		 confirmation_field = field_name+"_confirmation"
+
+		 try:
+			 if confirmation_field not in data.keys():
+				 errs.append(field_name + " must have a pair field named %s " % confirmation_field)
+		 except KeyError:
+			 errs.append("No Field named %s to validate for confirmed Rule" % (field_name))
 		 return errs
 
 	def __validate_size_fields(self, data, field_name, rule):
