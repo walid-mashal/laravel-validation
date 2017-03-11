@@ -164,6 +164,7 @@ class Validation():
 			errs.append("No Field named %s to validate for email value" % (field_name))
 			result = "error"
 
+		#in case the re did not match or their was a key error
 		if not result:
 			errs.append("%s must be a valid email address" % field_name)
 		return errs
@@ -193,6 +194,7 @@ class Validation():
 			errs.append("No Field named %s to validate for IP Address value" % (field_name))
 			result = "error"
 
+		#in case the re did not match or their was a key error
 		if not result:
 			errs.append("%s must be a valid IP address" % field_name)
 		return errs
@@ -209,6 +211,7 @@ class Validation():
 			 errs.append("No Field named "+field_name+" to validate as a phone number")
 			 result = "error"
 
+		#in case the re did not match or their was a key error
 		 if not result:
 			 errs.append("%s must be a valid Phone Number" % field_name)
 			
@@ -226,6 +229,7 @@ class Validation():
 			 errs.append("No Field named %s to validate for a website url value" % (field_name))
 			 result = "error"
 
+		#in case the re did not match or their was a key error
 		 if not result:
 			 errs.append("%s must be a valid Website URL" % field_name)
 
