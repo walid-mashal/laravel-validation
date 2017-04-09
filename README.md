@@ -101,6 +101,14 @@ The field under validation must be a valid date, the default value for the forma
 
 The field under validation must match the format defined in the **format**, the default format is **%m/%d/%Y**. This rule should be preceeded by the **date** rule.
 
+#### after
+
+The field under validation must be a value after a given date.
+
+#### before:date
+
+The field under validation must be a value preceding the given date.
+
 #### different:field
 
 The given field must be different than the field under validation.

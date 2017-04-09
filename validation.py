@@ -33,6 +33,14 @@ class Validation():
 				elif rule == "date":
 					field_errors.extend(self.__validate_date_fields(data,field_name,field_rules))
 
+				#if the field has a "after" rule assigned
+				elif rule.startswith("after"):
+					field_errors.extend(self.__validate_after_date_fields(data,field_name,field_rules,rule))
+
+				#if the field has a "before" rule assigned
+				elif rule.startswith("before"):
+					field_errors.extend(self.__validate_before_date_fields(data,field_name,field_rules,rule))
+
 				#if the field has a "max" rule assigned
 				elif rule.startswith("max"):
 					field_errors.extend(self.__validate_max_fields(data,field_name,rule))
@@ -140,6 +148,70 @@ class Validation():
 			 errs.append("No Field named %s to validate for Date value" % (field_name))
 			
 		return errs
+
+	def __validate_before_date_fields(self, data, field_name, field_rules,rule):
+		 """Used for validating fields for a date before the specified date value, returns a list of error messages"""
+
+		 #retrieve the value for that before rule
+		 before_date_value = rule.split(':')[1]
+
+		 errs = []
+		 date_format = None
+
+		 #loop through each rule for the particular field to check if there is any date_format rule assigned
+		 for rule in field_rules:
+			#if there is a date_format rule assigned then fetch the date format from that
+		 	if rule.startswith("date_format"):
+				df_format_index = field_rules.index(rule)
+				date_format = field_rules[df_format_index].split(":")[1]
+
+		 #or if there is no date_format rule assigned then use a default format for validation
+		 if not date_format:
+			date_format = '%m/%d/%Y'
+
+		 try:
+			date_entered = datetime.datetime.strptime(data[field_name], date_format).date()
+			before_date = datetime.datetime.strptime(before_date_value, date_format).date()
+			if date_entered >= before_date:
+				 errs.append("The " + field_name + " ("+data[field_name]+") must be before the date " + str(before_date_value))
+		 except KeyError:
+			 errs.append("No Field named %s to validate for the before rule" % (field_name))
+		 except ValueError:
+			 errs.append(sys.exc_info()[1])
+		 return errs
+
+
+
+	def __validate_after_date_fields(self, data, field_name, field_rules,rule):
+		 """Used for validating fields for a date after the specified date value, returns a list of error messages"""
+
+		 #retrieve the value for that after rule
+		 after_date_value = rule.split(':')[1]
+
+		 errs = []
+		 date_format = None
+
+		 #loop through each rule for the particular field to check if there is any date_format rule assigned
+		 for rule in field_rules:
+			#if there is a date_format rule assigned then fetch the date format from that
+		 	if rule.startswith("date_format"):
+				df_format_index = field_rules.index(rule)
+				date_format = field_rules[df_format_index].split(":")[1]
+
+		 #or if there is no date_format rule assigned then use a default format for validation
+		 if not date_format:
+			date_format = '%m/%d/%Y'
+
+		 try:
+			date_entered = datetime.datetime.strptime(data[field_name], date_format).date()
+			after_date = datetime.datetime.strptime(after_date_value, date_format).date()
+			if date_entered <= after_date:
+				 errs.append("The " + field_name + " ("+data[field_name]+") must be after the date " + str(after_date_value))
+		 except KeyError:
+			 errs.append("No Field named %s to validate for the after rule" % (field_name))
+		 except ValueError:
+			 errs.append(sys.exc_info()[1])
+		 return errs
 
 	def __validate_integer_fields(self, data, field_name):
 		"""Used for validating integer fields, returns a list of error messages"""
