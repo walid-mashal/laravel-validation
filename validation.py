@@ -21,25 +21,57 @@ class Validation():
 			#now looping through rules of one field one rule at a time with each iteration
 			for rule in field_rules:
 
-				#if the field has a "required" rule assigned
-				if rule == "required":
-					field_errors.extend(self.__validate_required_fields(data, field_name))
+				#if the field has an "after" rule assigned
+				if rule.startswith("after"):
+					field_errors.extend(self.__validate_after_date_fields(data,field_name,field_rules,rule))
 
-				#if the field has a "phone" rule assigned
-				elif rule == "phone":
-					field_errors.extend(self.__validate_phone_fields(data, field_name))
+				#if the field has a "alpha" rule assigned
+				elif rule == "alpha":
+					field_errors.extend(self.__validate_alpha_fields(data,field_name))
+
+				#if the field has a "alpha_num" rule assigned
+				elif rule == "alpha_num":
+					field_errors.extend(self.__validate_alpha_num_fields(data,field_name))
+
+				#if the field has a "before" rule assigned
+				elif rule.startswith("before"):
+					field_errors.extend(self.__validate_before_date_fields(data,field_name,field_rules,rule))
+
+				#if the field has a "between" rule assigned
+				elif rule.startswith("between"):
+					field_errors.extend(self.__validate_between_fields(data, field_name, rule))
+
+				#if the field has a "boolean" rule assigned
+				elif rule == "boolean":
+					field_errors.extend(self.__validate_boolean_fields(data,field_name))
+
+				#if the field has a "confirmed" rule assigned
+				elif rule.startswith("confirmed"):
+					field_errors.extend(self.__validate_confirmed_fields(data,field_name))
 
 				#if the field has a "date" rule assigned
 				elif rule == "date":
 					field_errors.extend(self.__validate_date_fields(data,field_name,field_rules))
 
-				#if the field has a "after" rule assigned
-				elif rule.startswith("after"):
-					field_errors.extend(self.__validate_after_date_fields(data,field_name,field_rules,rule))
+				#if the field has a "digit" rule assigned
+				elif rule == "digits":
+					field_errors.extend(self.__validate_integer_fields(data,field_name))
 
-				#if the field has a "before" rule assigned
-				elif rule.startswith("before"):
-					field_errors.extend(self.__validate_before_date_fields(data,field_name,field_rules,rule))
+				#if the field has a "different" rule assigned
+				elif rule.startswith("different"):
+					field_errors.extend(self.__validate_different_fields(data,field_name, rule))
+
+				#if the field has a "email" rule assigned
+				elif rule == "email":
+					field_errors.extend(self.__validate_email_fields(data,field_name))
+
+				#if the field has a "in" rule assigned
+				elif rule.startswith("in"):
+					field_errors.extend(self.__validate_in_fields(data,field_name, rule))
+
+				#if the field has a "ip" rule assigned
+				elif rule == "ip":
+					field_errors.extend(self.__validate_ip_fields(data,field_name))
 
 				#if the field has a "max" rule assigned
 				elif rule.startswith("max"):
@@ -49,63 +81,40 @@ class Validation():
 				elif rule.startswith("min"):
 					field_errors.extend(self.__validate_min_fields(data,field_name,rule))
 
-				#if the field has a "min" rule assigned
-				elif rule.startswith("confirmed"):
-					field_errors.extend(self.__validate_confirmed_fields(data,field_name))
-
-				elif rule.startswith("size"):
-					field_errors.extend(self.__validate_size_fields(data,field_name,rule))
-
-				#if the field has a "digit" rule assigned
-				elif rule == "digits":
-					field_errors.extend(self.__validate_integer_fields(data,field_name))
-
-				#if the field has a "boolean" rule assigned
-				elif rule == "boolean":
-					field_errors.extend(self.__validate_boolean_fields(data,field_name))
-
-				#if the field has a "ip" rule assigned
-				elif rule == "ip":
-					field_errors.extend(self.__validate_ip_fields(data,field_name))
-
-				#if the field has a "website" rule assigned
-				elif rule == "website":
-					field_errors.extend(self.__validate_website_fields(data,field_name))
-
-				#if the field has a "alpha" rule assigned
-				elif rule == "alpha":
-					field_errors.extend(self.__validate_alpha_fields(data,field_name))
-
-				#if the field has a "alpha num" rule assigned
-				elif rule == "alpha_num":
-					field_errors.extend(self.__validate_alpha_num_fields(data,field_name))
-
-				#if the field has a "alpha num" rule assigned
-				elif rule == "email":
-					field_errors.extend(self.__validate_email_fields(data,field_name))
-
 				#if the field has a "not_in" rule assigned
 				elif rule.startswith("not_in"):
 					field_errors.extend(self.__validate_not_in_fields(data,field_name,rule))
 
-				#if the field has a "in" rule assigned
-				elif rule.startswith("in"):
-					field_errors.extend(self.__validate_in_fields(data,field_name, rule))
+				#if the field has a "present" rule assigned
+				elif rule == "present":
+					field_errors.extend(self.__validate_present_fields(data,field_name))
 
-				#if the field has a "different" rule assigned
-				elif rule.startswith("different"):
-					field_errors.extend(self.__validate_different_fields(data,field_name, rule))
+				#if the field has a "phone" rule assigned
+				elif rule == "phone":
+					field_errors.extend(self.__validate_phone_fields(data, field_name))
+
+				#if the field has a "regex" rule assigned
+				elif rule.startswith("regex"):
+					field_errors.extend(self.__validate_regex_fields(data,field_name, rule))
+
+				#if the field has a "required" rule assigned
+				elif rule == "required":
+					field_errors.extend(self.__validate_required_fields(data, field_name))
 
 				#if the field has a "same" rule assigned
 				elif rule.startswith("same"):
 					field_errors.extend(self.__validate_same_fields(data, field_name, rule))
 
-				#if the field has a "bteween" rule assigned
-				elif rule.startswith("between"):
-					field_errors.extend(self.__validate_between_fields(data, field_name, rule))
+				#if the field has a "size" rule assigned
+				elif rule.startswith("size"):
+					field_errors.extend(self.__validate_size_fields(data,field_name,rule))
+
+				#if the field has a "website" rule assigned
+				elif rule == "website":
+					field_errors.extend(self.__validate_website_fields(data,field_name))
 
 			#combine the errors of current field with the global errors list
-			errors.extend(field_errors);
+			errors.extend(field_errors)
 		self.errors = errors
 		return errors
 
@@ -118,7 +127,6 @@ class Validation():
 				 errs.append(field_name + " must be filled")
 		except KeyError:
 			errs.append("No Field named " + field_name + " to validate for required value")
-			# return []
 
 		return errs        
 
@@ -181,7 +189,6 @@ class Validation():
 		 return errs
 
 
-
 	def __validate_after_date_fields(self, data, field_name, field_rules,rule):
 		 """Used for validating fields for a date after the specified date value, returns a list of error messages"""
 
@@ -239,6 +246,38 @@ class Validation():
 		#in case the re did not match or their was a key error
 		if not result:
 			errs.append("%s must be a valid email address" % field_name)
+		return errs
+
+
+	def __validate_regex_fields(self, data, field_name, rule):
+		"""Used for validating field data to match a regular expression, returns a list of error messages"""
+
+		regex = str(rule.split(':')[1])
+		comp_re = re.compile(regex)
+
+		errs = []
+		try:	
+			result = comp_re.match(data[field_name])
+		except KeyError:
+			errs.append("No Field named %s to validate for regex value" % (field_name))
+			result = "error"
+
+		#in case the re did not match or their was a key error
+		if not result:
+			errs.append("%s field does not match the RE %s" % (field_name,regex))
+		return errs
+
+
+	def __validate_present_fields(self, data, field_name):
+		"""Used for validating present fields, returns a list of error messages"""
+
+		errs = []
+		try:
+			if not data.has_key(field_name):
+				errs.append("The data dictionary must have a nullable %s field"%(field_name))	
+		except KeyError:
+			errs.append("The data dictionary must have a nullable %s field" % (field_name))
+			
 		return errs
 
 	def __validate_boolean_fields(self, data, field_name):
@@ -318,7 +357,6 @@ class Validation():
 			 errs.append("No Field named %s to validate for a alpha rule" % (field_name))
 		
 		 return errs
-
 
 	def __validate_alpha_num_fields(self, data, field_name):
 		 """Used for validating fields for alphabets and numbers, returns a list of error messages"""

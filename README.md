@@ -73,6 +73,10 @@ After **validate()** or **is_valid()** there will be an instance variable with t
 
 The following is a list of the validation rules available
 
+#### after
+
+The field under validation must be a value after a given date.
+
 #### alpha
 
 The field under validation must be entirely alphabetic characters.
@@ -80,6 +84,10 @@ The field under validation must be entirely alphabetic characters.
 #### alpha_num
 
 The field under validation must be entirely alpha-numeric characters.
+
+#### before:date
+
+The field under validation must be a value preceding the given date.
 
 #### between:min,max
 
@@ -100,14 +108,6 @@ The field under validation must be a valid date, the default value for the forma
 #### date_format:format
 
 The field under validation must match the format defined in the **format**, the default format is **%m/%d/%Y**. This rule should be preceeded by the **date** rule.
-
-#### after
-
-The field under validation must be a value after a given date.
-
-#### before:date
-
-The field under validation must be a value preceding the given date.
 
 #### different:field
 
@@ -140,6 +140,14 @@ The field under validation must have a minimum value. Strings, numerics, and fil
 #### not_in:foo,bar,...
 
 The field under validation must not be included in the given list of values.
+
+#### present
+
+The field under validation must be present in the input data but can be empty.
+
+#### regex:pattern
+
+The field under validation must match the given regular expression.
 
 #### required
 
