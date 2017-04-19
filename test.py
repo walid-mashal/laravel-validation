@@ -6,7 +6,7 @@ data = {
 	'new_password':'@$#%$%$$#$#$#',
 	'new_password_confirmation':'222322222',
 	'phone':'0796359038',
-	'birthday':'10-10-1999',
+	'birthday':'10-1090',
 	'email':'walid@',
 	'host':'172.30.30.231',
 	'website':'www.oogle.com',
@@ -17,7 +17,7 @@ data = {
 
 rules = {
 	'month_day':r"required|regex:([a-zA-Z]+)",
-	'birthday':'required|date_format:%m-%d-%Y|before:10-10-1995',
+	'birthday':'required|date_format:%m-%d-%Y|after:10-10-1995',
 	'old_password':'required',
 	'new_password':'different:old_password|alpha|confirmed',
 	'new_password_confirmation':'same:new_password',
