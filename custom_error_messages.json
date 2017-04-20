@@ -1,0 +1,4 @@
+{
+	"_comment": "Declare your error message in the following format",
+	"field_name.rule":"The message to be displayed for the field"
+}
