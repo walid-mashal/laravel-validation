@@ -1,4 +1,16 @@
 {
 	"_comment": "Declare your error message in the following format",
-	"field_name.rule":"The message to be displayed for the field"
+	"field_name.rule":"The message to be displayed for the field",
+	"month_day.regex":"aaaaaaaaaaa",
+	"phone.max":"aaaaaaaaaaaa",
+	"month_day.required":"bbbbbbbbbbbbb",
+	"new_password_confirmation.same":"ooooooooooooooooo",
+	"phone.no_field":"aaaaaaaaaaaaaaa",
+	"birthday.date_format":"kkkkkkkkkkkkkk",
+	"new_password.alpha":"lllllllllllllllll",
+	"host.no_field":"aaaaaaaaaaaaaaaaaa",
+	"email.email":"aaaaaaaaaaaaaaaaa",
+	"nationality.no_field":"aaaaaaaaaaaaaaaaaaaa",
+	"active.no_field":"aaaaaaaaaaaaaaaaaaa",
+	"age.no_field":"aaaaaaaaaaaaaaaaaa"
 }

@@ -15,6 +15,11 @@ class Validation():
 		t = f.read()
 		self.error_message_templates = json.loads(t)
 
+		
+		f = open("custom_error_messages.json")
+		t = f.read()
+		self.custom_error_messages = json.loads(t)
+
 		#iterate through the rules dictionary, fetching each rule name (dictionary key) one by one
 		for field_name in rules:
 
@@ -130,9 +135,9 @@ class Validation():
 		errs = []
 		try:
 			if data[field_name] == '':
-				 errs.append(self.error_message_templates['required'] % (field_name,))
+					errs.append(self.return_field_message(field_name,"required"))
 		except KeyError:
-			errs.append(self.error_message_templates['no_field'] % (field_name,'required'))
+			errs.append(self.return_no_field_message(field_name,'required'))
 
 		return errs        
 
@@ -157,9 +162,9 @@ class Validation():
 		try:
 			 datetime.datetime.strptime(data[field_name], date_format)
 		except ValueError,e:
-			 errs.append(self.error_message_templates['date'] % (field_name, date_format))
+				errs.append(self.return_field_message(field_name,"date"))
 		except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'date'))
+			errs.append(self.return_no_field_message(field_name,'date'))
 			
 		return errs
 
@@ -187,11 +192,14 @@ class Validation():
 			date_entered = datetime.datetime.strptime(data[field_name], date_format).date()
 			before_date = datetime.datetime.strptime(before_date_value, date_format).date()
 			if date_entered >= before_date:
-				 errs.append(self.error_message_templates['before'] % (field_name, rule))
+					errs.append(self.return_field_message(field_name,"before"))
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'before'))
+			errs.append(self.return_no_field_message(field_name,'before'))
 		 except ValueError:
-			 errs.append(sys.exc_info()[1])
+			if self.custom_error_messages.has_key(field_name+"."):
+				errs.append(self.custom_error_messages[field_name+"."])
+			else:
+				errs.append(sys.exc_info()[1])
 		 return errs
 
 
@@ -219,11 +227,14 @@ class Validation():
 			date_entered = datetime.datetime.strptime(data[field_name], date_format).date()
 			after_date = datetime.datetime.strptime(after_date_value, date_format).date()
 			if date_entered <= after_date:
-				 errs.append(self.error_message_templates['after'] % (field_name, rule))
+					errs.append(self.return_field_message(field_name,"after"))
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'after date'))
+			errs.append(self.return_no_field_message(field_name,'after date'))
 		 except ValueError:
-			 errs.append(sys.exc_info()[1])
+			if self.custom_error_messages.has_key(field_name+"."):
+				errs.append(self.custom_error_messages[field_name+"."])
+			else:
+				errs.append(sys.exc_info()[1])
 		 return errs
 
 	def __validate_integer_fields(self, data, field_name):
@@ -232,9 +243,9 @@ class Validation():
 		errs = []
 		try:
 			if not data[field_name].isdigit():
-				errs.append(self.error_message_templates['digits'] % (field_name,))
+					errs.append(self.return_field_message(field_name,"integer"))
 		except KeyError:
-			errs.append("No Field named " + field_name + " to validate for integer value")
+			errs.append(self.return_no_field_message(field_name,'integer'))
 		return errs
 
 
@@ -246,12 +257,12 @@ class Validation():
 		try:	
 			result = comp_re.match(data[field_name])
 		except KeyError:
-			errs.append(self.error_message_templates['no_field'] % (field_name,'email'))
+			errs.append(self.return_no_field_message(field_name,'email'))
 			result = "error"
 
-		#in case the re did not match or their was a key error
+		#in case the RE did not match or their was a key error
 		if not result:
-			errs.append(self.error_message_templates['email'] %(field_name,))
+				errs.append(self.return_field_message(field_name,"email"))
 		return errs
 
 
@@ -265,14 +276,17 @@ class Validation():
 		try:	
 			result = comp_re.match(data[field_name])
 		except KeyError:
-			errs.append(self.error_message_templates['no_field'] % (field_name,'regex'))
+			errs.append(self.return_no_field_message(field_name,'regex'))
 			result = "error"
 
-		#in case the re did not match or their was a key error
+		#in case the RE did not match or their was a key error
 		if not result:
-			errs.append(self.error_message_templates['regex'] % (field_name, regex))
+			
+			# if self.custom_error_messages.has_key(field_name+".regex"):
+			# 	errs.append(self.custom_error_messages[field_name+".regex"])
+			# else:
+				errs.append(self.return_field_message(field_name,"regex"))
 		return errs
-
 
 	def __validate_present_fields(self, data, field_name):
 		"""Used for validating present fields, returns a list of error messages"""
@@ -280,9 +294,9 @@ class Validation():
 		errs = []
 		try:
 			if not data.has_key(field_name):
-				errs.append(self.error_message_templates['present'] % (field_name,))	
+					errs.append(self.return_field_message(field_name,"present"))	
 		except KeyError:
-			errs.append(self.error_message_templates['present'] + field_name + " field")
+			errs.append(self.return_no_field_message(field_name,'present'))
 			
 		return errs
 
@@ -294,9 +308,9 @@ class Validation():
 		bool_values = [1,0,"1","0","false","true",False,True]
 		try:
 			if data[field_name] not in bool_values:
-				errs.append(self.error_message_templates['boolean'] % (field_name, str(bool_values)))
+						errs.append(self.return_field_message(field_name,"boolean"))
 		except KeyError:
-			errs.append(self.error_message_templates['no_field'] % (field_name,'boolean'))
+				errs.append(self.return_no_field_message(field_name,'boolean'))
 		return errs
 
 	def __validate_ip_fields(self, data, field_name):
@@ -308,12 +322,12 @@ class Validation():
 		try:
 			result = comp_re.match(data[field_name])
 		except KeyError:
-			errs.append(self.error_message_templates['no_field'] % (field_name,'ip'))
+			errs.append(self.return_no_field_message(field_name,'ip'))
 			result = "error"
 
-		#in case the re did not match or their was a key error
+		#in case the RE did not match or their was a key error
 		if not result:
-			errs.append(" must be a valid IP address" % (field_name,))
+				errs.append(self.return_field_message(field_name,"max"))
 		return errs
 
 	def __validate_phone_fields(self, data, field_name):
@@ -325,12 +339,12 @@ class Validation():
 		 try:
 			 result = comp_re.match(data[field_name])
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'phone'))
-			 result = "error"
+			errs.append(self.return_no_field_message(field_name,'phone'))
+			result = "error"
 
-		#in case the re did not match or their was a key error
+		#in case the RE did not match or their was a key error
 		 if not result:
-			 errs.append(self.error_message_templates['phone'] % (field_name,))
+				errs.append(self.return_field_message(field_name,"phone"))
 			
 		 return errs
 
@@ -343,12 +357,12 @@ class Validation():
 		 try:
 		 	 result = comp_re.match(data[field_name])
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'website'))
-			 result = "error"
+			errs.append(self.return_no_field_message(field_name,'website'))
+			result = "error"
 
-		#in case the re did not match or their was a key error
+		#in case the RE did not match or their was a key error
 		 if not result:
-			 errs.append(self.error_message_templates['website'] % (field_name,))
+				errs.append(self.return_field_message(field_name,"website"))
 
 		 return errs
 
@@ -358,9 +372,9 @@ class Validation():
 		 errs = []
 		 try:
 		 	 if not data[field_name].isalpha():
-				  errs.append(self.error_message_templates['alpha'] % (field_name,))
+					errs.append(self.return_field_message(field_name,"alpha"))
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'alpha'))
+				errs.append(self.return_no_field_message(field_name,'alpha'))
 		
 		 return errs
 
@@ -370,9 +384,9 @@ class Validation():
 		 errs = []
 		 try:
 		 	 if not data[field_name].isalnum():
-				errs.append(self.error_message_templates['alpha_num'] % field_name)
+					errs.append(self.return_field_message(field_name,"alpha_num"))
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'alpha numeric'))
+				errs.append(self.return_no_field_message(field_name,'alpha numeric'))
 
 		 return errs
 
@@ -386,12 +400,12 @@ class Validation():
 		 try:
 			 if data[field_name].isdigit():
 				 if int(data[field_name]) > max_value:
-					 errs.append(self.error_message_templates['max'] % (field_name, str(max_value)))
+						errs.append(self.return_field_message(field_name,"max"))
 			 else:
 				 if len(data[field_name]) > max_value:
-					 errs.append(self.error_message_templates['max'] +" for field "+ field_name + " can be maximum " + str(min_value)+" characters")
+						errs.append(self.return_field_message(field_name,"max"))
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'maximum'))
+				errs.append(self.return_no_field_message(field_name,'maximum'))
 
 		 return errs
 
@@ -405,12 +419,12 @@ class Validation():
 		 try:
 			if data[field_name].isdigit():
 				if int(data[field_name]) < min_value:
-					errs.append(self.error_message_templates['min'] % (field_name, str(min_value)))
+						errs.append(self.return_field_message(field_name,"min"))
 			else:
 				if len(data[field_name]) < min_value:
-					errs.append(self.error_message_templates['min'] +" for field "+ field_name + " must be atleast " + str(min_value)+" characters")
+						errs.append(self.return_field_message(field_name,"min"))
 		 except KeyError:
-			errs.append(self.error_message_templates['no_field'] % (field_name,'minimum'))
+				errs.append(self.return_no_field_message(field_name,'minimum'))
 
 		 return errs
 
@@ -418,13 +432,13 @@ class Validation():
 		 """if the field under validation is password, a matching password_confirmation field must be present in the data, returns a list of error messages"""
 
 		 errs = []
-		 confirmation_field = field_name+"_confirmation"
+		 confirmation_field = field_name + "_confirmation"
 
 		 try:
 			 if confirmation_field not in data.keys():
-				 errs.append(self.error_message_templates['confirmed'] % (field_name ,confirmation_field))
+					errs.append(self.return_field_message(field_name,"confirmed"))
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'confirmed'))
+					errs.append(self.return_no_field_message(field_name,'confirmed'))
 		 return errs
 
 	def __validate_size_fields(self, data, field_name, rule):
@@ -436,9 +450,9 @@ class Validation():
 		 errs = []
 		 try:
 			 if len(data[field_name]) >= size_value:
-				 errs.append(self.error_message_templates['size'] % (field_name,str(size_value)))
+					errs.append(self.return_field_message(field_name,"size"))
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'size'))
+				errs.append(self.return_no_field_message(field_name,'size'))
 
 		 return errs
 
@@ -451,9 +465,9 @@ class Validation():
 
 		 try:
 			 if data[field_name] in ls:
-				 errs.append(self.error_message_templates['not_in'] % (field_name,'not_in'))
+					errs.append(self.return_field_message(field_name,'not_in'))
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'not_in'))
+				errs.append(self.return_no_field_message(field_name,'not_in'))
 
 		 return errs
 
@@ -466,9 +480,9 @@ class Validation():
 
 		 try:
 			 if data[field_name] not in ls:
-				 errs.append(self.error_message_templates['in'] % (field_name, str(ls)))
+					errs.append(self.return_field_message(field_name, "in"))
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'in'))
+				errs.append(self.return_no_field_message(field_name,'in'))
 		 return errs
 
 
@@ -481,11 +495,15 @@ class Validation():
 
 		 try:
 			 if data[field_name] == data[ls[0]]:
-				 errs.append(self.error_message_templates['different'] % (field_name, str(ls[0])))
+				errs.append(self.return_field_message(field_name,"different"))
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'different'))
+				errs.append(self.return_no_field_message(field_name,'different'))
 		 except Exception:
-			 errs.append("Error Occured",sys.exc_info())
+			 
+			if self.custom_error_messages.has_key(field_name+".different"):
+				errs.append(self.custom_error_messages[field_name+".different"])
+			else:
+				errs.append("Error Occured",sys.exc_info())
  		 
 		 return errs
 
@@ -498,9 +516,9 @@ class Validation():
 
 		 try:
 			 if data[field_name] != data[ls[0]]:
-				 errs.append(self.error_message_templates['same'] % (field_name, str(ls[0])))
+					errs.append(self.return_field_message(field_name, "same"))
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'same'))
+				errs.append(self.return_no_field_message(field_name,'same'))
 		 return errs
 
 
@@ -513,12 +531,24 @@ class Validation():
 
 		 try:
 			 if int(data[field_name]) < int(ls[0]) or int(data[field_name]) > int(ls[1]):
-				 errs.append(self.error_message_templates['between'] % (field_name, ls[0],ls[1]))
+					errs.append(self.return_field_message(field_name,'between'))
 		 except KeyError:
-			 errs.append(self.error_message_templates['no_field'] % (field_name,'between'))
+				errs.append(self.return_no_field_message(field_name,"between"))
 		 except ValueError:
-			 errs.append(field_name + " can not be empty")
+				errs.append(field_name + " can not be empty")
 		 return errs
+
+	def return_no_field_message(self, field_name, rule_name):
+		if self.custom_error_messages.has_key(field_name+".no_field"):
+			return self.custom_error_messages[field_name+".no_field"]
+		else:
+			return self.error_message_templates['no_field'] % (field_name,rule_name)
+
+	def return_field_message(self, field_name, rule_name):
+		if self.custom_error_messages.has_key(field_name+"."+rule_name):
+			return self.custom_error_messages[field_name+"."+rule_name]
+		else:
+			return self.error_message_templates[rule_name] % (field_name)
 
 	def is_valid(self, data, rules):
 		"""Validates the data according to the rules, returns True if the data is valid, and False if the data is invalid"""
@@ -529,4 +559,3 @@ class Validation():
 		self.errors = errors
 
 		return not len(errors) > 0
-			
