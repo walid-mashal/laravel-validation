@@ -58,6 +58,9 @@ Now we can write the following code to validate the **data**:
 
 Now the **errors** contain a list of  error messages that is the result of the validation.
 
+**validate()** also takes an optional **custom_messages** argument which will set user messages to be used for validation, or instead of passing the **custom_messages** argument you can actually set the messages of your own choice using the **cutom_error_messages.json** file.
+
+
 We can call the **is_valid()** method to validate the data and will return either **True** or **False** 
 
     from validation import Validation

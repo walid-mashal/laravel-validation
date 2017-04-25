@@ -22,5 +22,5 @@
 		"same":"'%s' has invalid value for same rule",
 		"size":"'%s' has invalid value for size rule",
 		"website":"'%s' must be a valid Website URL",
-		"no_field":"No field named '%s' to validate for value"
+		"no_field":"No field named '%s' to validate for %s rule"
 }
