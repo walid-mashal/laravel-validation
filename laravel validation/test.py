@@ -1,7 +1,7 @@
 from validation import Validation
 
 data = {
-	'month_day':'55',
+	'month_day':'5522',
 	'old_password':'asdf',
 	'new_password':'@$#%$%$$#$#$#',
 	'new_password_confirmation':'222322222',
@@ -17,7 +17,7 @@ data = {
 
 rules = {
 	'month_day':r"required|regex:([a-zA-Z]+)",
-	'birthday':'required|date_format:%m-%d-%Y|after:10-10-1995|before:02-25-2010',
+	'birthday':'required|date_format:%m-%d-%Y|after:10-10-1995|before:02-25-2010|date',
 	'old_password':'required',
 	'new_password':'different:old_password|alpha|confirmed',
 	'new_password_confirmation':'same:new_password',
@@ -33,7 +33,6 @@ rules = {
 my_messages = {
 	"_comment": "You did not provide any field named <feld_name> in your data dictionary",
 	"field_name.rule":"You did not provide any field named field_name in your data dictionary",
-
 	"month_day.regex":"You did not provide any field named month_day in your data dictionary",
 	"phone.max":"You did not provide any field named phone in your data dictionary",
 	"month_day.required":"You did not provide any field named month_day in your data dictionary",
@@ -50,7 +49,7 @@ my_messages = {
 
 validation = Validation()
 
-errors = validation.validate(data,rules,my_messages) 
+errors = validation.validate(data,rules) 
 
 for error in errors:
 	print error
