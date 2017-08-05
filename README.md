@@ -1,6 +1,6 @@
 ### Validation
 
-**Validation** is a python class containing logic for implementing Laravel style Data Validation using python language. This code can be used with html forms to validate their input fields and can also be used with any kind of other data as long as the data is in the form of a python dictionary.
+**Validation** is a python module containing logic for implementing Laravel style Data Validation using python language. This code can be used with html forms to validate their input fields and can also be used with any kind of other data as long as the data is in the form of a python dictionary.
 
 For Example we can have some data in the form of a python dictionary as the following:
 

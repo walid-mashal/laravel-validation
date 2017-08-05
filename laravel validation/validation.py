@@ -160,7 +160,6 @@ class Validation():
 		 after_date_value = rule.split(':')[1]
 
 		 errs = []
-
 		 date_format = self.retrieve_date_format(field_rules)
 
 		 try:
