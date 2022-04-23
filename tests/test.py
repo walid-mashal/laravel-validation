@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(1,'../laravel_validation')
 from validation import Validation
 
 data = {
@@ -6,7 +8,7 @@ data = {
 	'new_password':'@$#%$%$$#$#$#',
 	'new_password_confirmation':'222322222',
 	'phone':'0796359038',
-	'birthday':'-2212-20',
+	'birthday':'02-12-2020',
 	'email':'walid',
 	'host':'172.30.30.20',
 	'website':'www.oogle.com',

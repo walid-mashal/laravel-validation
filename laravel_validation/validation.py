@@ -1,21 +1,20 @@
-import re, datetime, sys,json
+import re, datetime, sys
+# import json
 
 class Validation():
-    #List to store the error messages in
-    errors = []
 
-    error_message_templates = {}
+    def __init__(self):
+        self.error_message_templates = self.get_error_message_templates()
+        self.custom_error_messages = self.get_custom_error_messages()
+        # List to store the error messages in
+        self.errors = []
 
     def validate(self, data, rules, custom_messages=None):
         """Validate the 'data' according to the 'rules' given, returns a list of errors named 'errors'"""
-        
-        self.error_message_templates = self.load_json_file("error_message_templates.json")
-        
-        if not custom_messages:
-            self.custom_error_messages = self.load_json_file("custom_error_messages.json")
-        else:
-            self.custom_error_messages = custom_messages
 
+        if custom_messages:
+            self.custom_error_messages = custom_messages
+        
         #iterate through the rules dictionary, fetching each rule name (dictionary key) one by one
         for field_name in rules:
 
@@ -27,83 +26,92 @@ class Validation():
 
             #now looping through rules of one field one rule at a time with each iteration
             for rule in field_rules:
-
-                #validate the data based on the rule assigned
-
-                if rule.startswith("after"):
-                    field_errors.extend(self.__validate_after_date_fields(data,field_name,field_rules,rule))
-
-                elif rule == "alpha":
-                    field_errors.extend(self.__validate_alpha_fields(data,field_name))
-
-                elif rule == "alpha_num":
-                    field_errors.extend(self.__validate_alpha_num_fields(data,field_name))
-
-                elif rule.startswith("before"):
-                    field_errors.extend(self.__validate_before_date_fields(data,field_name,field_rules,rule))
-
-                elif rule.startswith("between"):
-                    field_errors.extend(self.__validate_between_fields(data, field_name, rule))
-
-                elif rule == "boolean":
-                    field_errors.extend(self.__validate_boolean_fields(data,field_name))
-
-                elif rule.startswith("confirmed"):
-                    field_errors.extend(self.__validate_confirmed_fields(data,field_name))
-
-                elif rule == "date":
-                    field_errors.extend(self.__validate_date_fields(data,field_name,field_rules))
-
-                elif rule == "digits":
-                    field_errors.extend(self.__validate_integer_fields(data,field_name))
-
-                elif rule.startswith("different"):
-                    field_errors.extend(self.__validate_different_fields(data,field_name, rule))
-
-                elif rule == "email":
-                    field_errors.extend(self.__validate_email_fields(data,field_name))
-
-                elif rule.startswith("in"):
-                    field_errors.extend(self.__validate_in_fields(data,field_name, rule))
-
-                elif rule == "ip":
-                    field_errors.extend(self.__validate_ip_fields(data,field_name))
-
-                elif rule.startswith("max"):
-                    field_errors.extend(self.__validate_max_fields(data,field_name,rule))
-
-                elif rule.startswith("min"):
-                    field_errors.extend(self.__validate_min_fields(data,field_name,rule))
-
-                elif rule.startswith("not_in"):
-                    field_errors.extend(self.__validate_not_in_fields(data,field_name,rule))
-
-                elif rule == "present":
-                    field_errors.extend(self.__validate_present_fields(data,field_name))
-
-                elif rule == "phone":
-                    field_errors.extend(self.__validate_phone_fields(data, field_name))
-
-                elif rule.startswith("regex"):
-                    field_errors.extend(self.__validate_regex_fields(data,field_name, rule))
-
-                elif rule == "required":
-                    field_errors.extend(self.__validate_required_fields(data, field_name))
-
-                elif rule.startswith("same"):
-                    field_errors.extend(self.__validate_same_fields(data, field_name, rule))
-
-                elif rule.startswith("size"):
-                    field_errors.extend(self.__validate_size_fields(data,field_name,rule))
-
-                elif rule == "website":
-                    field_errors.extend(self.__validate_website_fields(data,field_name))
+                field_errors.extend(self.validate_field_rule(data, field_name, rule, field_rules))
 
             self.errors.extend(field_errors)
 
         return self.errors
 
-    def __validate_required_fields(self, data, field_name):
+    def validate_field_rule(self, data, field_name, rule, field_rules=None):
+        """Validates the data of the field based on the rule assigned"""
+
+        rule_error = ""
+
+        if rule.startswith("after"):
+            rule_error = self.validate_after_date_fields(data,field_name,field_rules,rule)
+
+        elif rule == "alpha":
+            rule_error = self.validate_alpha_fields(data,field_name)
+
+        elif rule == "alpha_num":
+            rule_error = self.validate_alpha_num_fields(data,field_name)
+
+        elif rule.startswith("before"):
+            rule_error = self.validate_before_date_fields(data,field_name,field_rules,rule)
+
+        elif rule.startswith("between"):
+            rule_error = self.validate_between_fields(data, field_name, rule)
+
+        elif rule == "boolean":
+            rule_error = self.validate_boolean_fields(data,field_name)
+
+        elif rule.startswith("confirmed"):
+            rule_error = self.validate_confirmed_fields(data,field_name)
+
+        elif rule == "date":
+            rule_error = self.validate_date_fields(data,field_name,field_rules)
+
+        elif rule == "digits":
+            rule_error = self.validate_integer_fields(data,field_name)
+
+        elif rule.startswith("different"):
+            rule_error = self.validate_different_fields(data,field_name, rule)
+
+        elif rule == "email":
+            rule_error = self.validate_email_fields(data,field_name)
+
+        elif rule.startswith("in"):
+            rule_error = self.validate_in_fields(data,field_name, rule)
+
+        elif rule == "ip":
+            rule_error = self.validate_ip_fields(data,field_name)
+
+        elif rule.startswith("max"):
+            rule_error = self.validate_max_fields(data,field_name,rule)
+
+        elif rule.startswith("min"):
+            rule_error = self.validate_min_fields(data,field_name,rule)
+
+        elif rule.startswith("not_in"):
+            rule_error = self.validate_not_in_fields(data,field_name,rule)
+
+        elif rule == "present":
+            rule_error = self.validate_present_fields(data,field_name)
+
+        elif rule == "phone":
+            rule_error = self.validate_phone_fields(data, field_name)
+
+        elif rule.startswith("regex"):
+            rule_error = self.validate_regex_fields(data,field_name, rule)
+
+        elif rule == "required":
+            rule_error = self.validate_required_fields(data, field_name)
+
+        elif rule.startswith("same"):
+            rule_error = self.validate_same_fields(data, field_name, rule)
+
+        elif rule.startswith("size"):
+            rule_error = self.validate_size_fields(data,field_name,rule)
+
+        elif rule == "website":
+            rule_error = self.validate_website_fields(data,field_name)
+
+        else:
+            rule_error = "Invalid Rule: %s" % (rule)
+
+        return rule_error
+
+    def validate_required_fields(self, data, field_name):
         """Used for validating required fields, returns a list of error messages"""
 
         errs = []
@@ -115,12 +123,11 @@ class Validation():
 
         return errs        
 
-    def __validate_date_fields(self, data, field_name, field_rules):
+    def validate_date_fields(self, data, field_name, field_rules):
         """Used for validating date fields, returns a list of error messages"""
 
         errs = []
         date_format = self.retrieve_date_format(field_rules)
-
         try:
             datetime.datetime.strptime(data[field_name], date_format)
         except ValueError:
@@ -130,7 +137,7 @@ class Validation():
             
         return errs
 
-    def __validate_before_date_fields(self, data, field_name, field_rules,rule):
+    def validate_before_date_fields(self, data, field_name, field_rules,rule):
         """Used for validating fields for a date before the specified date value, returns a list of error messages"""
 
         #retrieve the value for that before rule
@@ -153,7 +160,7 @@ class Validation():
 
         return errs
 
-    def __validate_after_date_fields(self, data, field_name, field_rules,rule):
+    def validate_after_date_fields(self, data, field_name, field_rules,rule):
         """Used for validating fields for a date after the specified date value, returns a list of error messages"""
 
         #retrieve the value for that after rule
@@ -176,7 +183,7 @@ class Validation():
 
         return errs
 
-    def __validate_integer_fields(self, data, field_name):
+    def validate_integer_fields(self, data, field_name):
         """Used for validating integer fields, returns a list of error messages"""
 
         errs = []
@@ -187,29 +194,29 @@ class Validation():
             errs.append(self.return_no_field_message(field_name,'integer'))
         return errs
 
-    def __validate_email_fields(self, data, field_name):
+    def validate_email_fields(self, data, field_name):
         """Used for validating email fields, returns a list of error messages"""
 
         regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
-        errs,result = self.match_regular_expression(regex,data[field_name],"website")
+        errs,result = self.match_regular_expression(regex,data[field_name],"email")
 
-        #in case the RE did not match or their was a key error
+        #in case the RE did not match or there was a key error
         if not result:
             errs.append(self.return_field_message(field_name,"email"))
         return errs
 
-    def __validate_regex_fields(self, data, field_name, rule):
+    def validate_regex_fields(self, data, field_name, rule):
         """Used for validating field data to match a regular expression, returns a list of error messages"""
 
         regex = str(rule.split(':')[1])
         errs,result = self.match_regular_expression(regex,data[field_name],"regex")
 
-        #in case the RE did not match or their was a key error
+        #in case the RE did not match or there was a key error
         if not result:
             errs.append(self.return_field_message(field_name,"regex"))
         return errs
 
-    def __validate_present_fields(self, data, field_name):
+    def validate_present_fields(self, data, field_name):
         """Used for validating present fields, returns a list of error messages"""
 
         errs = []
@@ -221,7 +228,7 @@ class Validation():
             
         return errs
 
-    def __validate_boolean_fields(self, data, field_name):
+    def validate_boolean_fields(self, data, field_name):
         """Used for validating boolean fields, returns a list of error messages"""
 
         errs = []
@@ -234,42 +241,42 @@ class Validation():
             errs.append(self.return_no_field_message(field_name,'boolean'))
         return errs
 
-    def __validate_ip_fields(self, data, field_name):
+    def validate_ip_fields(self, data, field_name):
         """Used for validating fields having IP Address, returns a list of error messages"""
 
         regex = r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"
         errs,result = self.match_regular_expression(regex,data[field_name],"ip")
 
-        #in case the RE did not match or their was a key error
+        #in case the RE did not match or there was a key error
         if not result:
             errs.append(self.return_field_message(field_name,"ip"))
         return errs
 
-    def __validate_phone_fields(self, data, field_name):
+    def validate_phone_fields(self, data, field_name):
         """Used for validating fields having phone numbers, returns a list of error messages"""
 
         regex = r'^(?:\+?93)?[07]\d{9,13}$'
         errs,result = self.match_regular_expression(regex,data[field_name],"phone")
 
-        #in case the RE did not match or their was a key error
+        #in case the RE did not match or there was a key error
         if not result:
             errs.append(self.return_field_message(field_name,"phone"))
             
         return errs
 
-    def __validate_website_fields(self, data, field_name):
+    def validate_website_fields(self, data, field_name):
         """Used for validating fields having website addresses, returns a list of error messages"""
 
         regex = r'(http(s)?://)?([\w-]+\.)+[\w-]+[\w-]+[\.]+[\.com]+([./?%&=]*)?'
         errs,result = self.match_regular_expression(regex,data[field_name],"website")
 
-        #in case the RE did not match or their was a key error
+        #in case the RE did not match or there was a key error
         if not result:
             errs.append(self.return_field_message(field_name,"website"))
 
         return errs
 
-    def __validate_alpha_fields(self, data, field_name):
+    def validate_alpha_fields(self, data, field_name):
         """Used for validating fields for alphabets only, returns a list of error messages"""
 
         errs = []
@@ -281,7 +288,7 @@ class Validation():
         
         return errs
 
-    def __validate_alpha_num_fields(self, data, field_name):
+    def validate_alpha_num_fields (self, data, field_name):
         """Used for validating fields for alphabets and numbers, returns a list of error messages"""
 
         errs = []
@@ -293,7 +300,7 @@ class Validation():
 
         return errs
 
-    def __validate_max_fields(self, data, field_name, rule):
+    def validate_max_fields(self, data, field_name, rule):
         """Used for validating fields for a maximum integer value, returns a list of error messages"""
 
         #retrieve the value for that max rule
@@ -312,7 +319,7 @@ class Validation():
 
         return errs
 
-    def __validate_min_fields(self, data, field_name, rule):
+    def validate_min_fields(self, data, field_name, rule):
         """Used for validating fields for a minimum integer value, returns a list of error messages"""
 
         #retrieve the value for that min rule
@@ -331,7 +338,7 @@ class Validation():
 
         return errs
 
-    def __validate_confirmed_fields(self, data, field_name):
+    def validate_confirmed_fields(self, data, field_name):
         """if the field under validation is a password, a matching password_confirmation field must be present in the data, 
             returns a list of error messages"""
 
@@ -345,7 +352,7 @@ class Validation():
             errs.append(self.return_no_field_message(field_name,'confirmed'))
         return errs
 
-    def __validate_size_fields(self, data, field_name, rule):
+    def validate_size_fields(self, data, field_name, rule):
         """Used for validating fields for a maximum number of characters in a string value, returns a list of error messages"""
 
         errs = []
@@ -362,7 +369,7 @@ class Validation():
             
         return errs
 
-    def __validate_not_in_fields(self, data, field_name, rule):
+    def validate_not_in_fields(self, data, field_name, rule):
         """Used for validating fields for some number of values to avoid, returns a list of error messages"""
 
         #retrieve the value for that not_in rule
@@ -377,7 +384,7 @@ class Validation():
 
         return errs
 
-    def __validate_in_fields(self, data, field_name, rule):
+    def validate_in_fields(self, data, field_name, rule):
         """Used for validating fields for some number of values to allow, returns a list of error messages"""
 
         #retrieve the value for that in rule
@@ -392,8 +399,11 @@ class Validation():
         return errs
 
 
-    def __validate_different_fields(self, data, field_name, rule):
-        """Used for validating fields whose value should be different than the value of some other field, returns a list of error messages"""
+    def validate_different_fields(self, data, field_name, rule):
+        """
+        Used for validating fields whose value should be different than the value of some other field, 
+        returns a list of error messages
+        """
 
         #retrieve the value for the different rule
         ls = rule.split(':')[1].split(',')[0]
@@ -409,8 +419,11 @@ class Validation():
          
         return errs
 
-    def __validate_same_fields(self, data, field_name, rule):
-        """Used for validating fields whose value should be the same as some other field value, returns a list of error messages"""
+    def validate_same_fields(self, data, field_name, rule):
+        """
+        Used for validating fields whose value should be the same as some other field value, 
+        returns a list of error messages
+        """
 
         #retrieve the value for the same rule
         ls = rule.split(':')[1].split(',')
@@ -424,7 +437,7 @@ class Validation():
         return errs
 
 
-    def __validate_between_fields(self, data, field_name, rule):
+    def validate_between_fields(self, data, field_name, rule):
         """Used for validating fields for a number between two digits to allow, returns a list of error messages"""
 
         #retrieve the value for the between rule
@@ -441,36 +454,33 @@ class Validation():
         return errs
 
     def retrieve_date_format(self,field_rules):
-
         #loop through each rule for the particular field to check if there is any date_format rule assigned
         for rule in field_rules:
             #if there is a date_format rule assigned then fetch the date format from that
             if rule.startswith("date_format"):
-                df_format_index = field_rules.index(rule)
-                date_format = field_rules[df_format_index].split(":")[1]
+                date_format = rule.split(":")[1]
+                
                 return date_format
 
         #if no date_format found, return the default date format
         return '%m/%d/%Y'
 
-    def match_regular_expression(self,regex,field_name,rule_name):
-
+    def match_regular_expression(self,regex,field_value,rule_name):
         comp_re = re.compile(regex, re.IGNORECASE)
         errs = []
 
         try:
-            result = comp_re.match(field_name)
+            result = comp_re.match(field_value)
         except KeyError:
-            errs.append(self.return_no_field_message(field_name,rule_name))
+            errs.append(self.return_no_field_message(field_value,rule_name))
             result = "error"
 
         return errs,result
 
-    def load_json_file(self,file_name):
-        f = open(file_name)
-        t = f.read()
-        f.close()
-        return json.loads(t)
+    # def load_json_file(self,file_name):
+    #     with open(file_name) as f:
+    #         t = f.read()
+    #         return json.loads(t)
 
     def return_no_field_message(self, field_name, rule_name):
         if self.custom_error_messages.__contains__(field_name+".no_field"):
@@ -488,8 +498,53 @@ class Validation():
         """Validates the data according to the rules, returns True if the data is valid, and False if the data is invalid"""
 
         errors = self.validate(data,rules)
-        if not errors: return False
 
         self.errors = errors
 
         return not len(errors) > 0
+
+    def get_error_message_templates(self):
+        return {
+            "after": "'%s' is an invalid after date",
+            "alpha":"'%s' can have only alphabets",
+            "alpha_num":"'%s' can have only alphabets or numbers",        
+            "before":"'%s' is an invalid before date ",
+            "between":"'%s' has an invalid value for between field",
+            "boolean":"'%s' has invalid value for boolean field",
+            "confirmed":"'%s' must have a pair field",
+            "date":"'%s' value does not match date format",
+            "digits":"'%s' must be an integer",
+            "different":"'%s' has invalid value for same rule ",
+            "email":"'%s' must be a valid email address",
+            "in":"'%s' has invalid value for in rule",
+            "ip":"'%s' must be a valid IP address",
+            "max":"The maximum value for the field '%s' is invalid",
+            "min":"The minimum value for the field '%s' is invalid",
+            "not_in":"'%s' has invalid value for not_in rule",
+            "present":"The data dictionary must have a nullable field name '%s'",
+            "phone":"'%s' must be a valid Phone Number",
+            "regex":"'%s' field does not match the RE ",
+            "required":"'%s' must be filled",
+            "same":"'%s' has invalid value for same rule",
+            "size":"'%s' has invalid value for size rule",
+            "website":"'%s' must be a valid Website URL",
+            "no_field":"No field named '%s' to validate for %s rule"
+        }
+    
+    def get_custom_error_messages(self):
+        return {
+            "_comment": "You did not provide any field named <feld_name> in your data dictionary",
+            "field_name.rule":"You did not provide any field named field_name in your data dictionary",
+            "month_day.regex":"You did not provide any field named month_day in your data dictionary",
+            "phone.max":"You did not provide any field named phone in your data dictionary",
+            "month_day.required":"You did not provide any field named month_day in your data dictionary",
+            "new_password_confirmation.same":"You did not provide any field named new_password_confirmation in your data dictionary",
+            "phone.no_field":"You did not provide any field named phone in your data dictionary",
+            "birthday.date_format":"You did not provide any field named birthday in your data dictionary",
+            "new_password.alpha":"field new_password can only have alphabet values",
+            "host.no_field":"You did not provide any field named host in your data dictionary",
+            "email.no_field":"You did not provide any field named email in your data dictionary",
+            "nationality.no_field":"You did not provide any field named nationality in your data dictionary",
+            "active.no_field":"You did not provide any field named active in your data dictionary",
+            "age.no_field":"You did not provide any field named age in your data dictionary"
+        }
