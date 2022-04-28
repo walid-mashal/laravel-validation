@@ -5,7 +5,7 @@ class Validation():
 
     def __init__(self):
         self.error_message_templates = self.get_error_message_templates()
-        self.custom_error_messages = self.get_custom_error_messages()
+        self.custom_error_messages = {}
         # List to store the error messages in
         self.errors = []
 
@@ -105,9 +105,6 @@ class Validation():
 
         elif rule == "website":
             rule_error = self.validate_website_fields(data,field_name)
-
-        else:
-            rule_error = "Invalid Rule: %s" % (rule)
 
         return rule_error
 
@@ -538,7 +535,7 @@ class Validation():
             "month_day.regex":"You did not provide any field named month_day in your data dictionary",
             "phone.max":"You did not provide any field named phone in your data dictionary",
             "month_day.required":"You did not provide any field named month_day in your data dictionary",
-            "new_password_confirmation.same":"You did not provide any field named new_password_confirmation in your data dictionary",
+            "new_password_confirmation.same":"You did not provide any field named %s in your data dictionary",
             "phone.no_field":"You did not provide any field named phone in your data dictionary",
             "birthday.date_format":"You did not provide any field named birthday in your data dictionary",
             "new_password.alpha":"field new_password can only have alphabet values",
